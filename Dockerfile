@@ -1,3 +1,4 @@
+# Step 1: Build the React app
 FROM node
 
 WORKDIR /app
@@ -8,6 +9,13 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+RUN npm run build
 
-CMD ["npm", "start"]
+# Step 2: Serve the React app using a lightweight web server
+FROM nginx
+
+COPY --from=build /app/build /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
